@@ -116,7 +116,7 @@ const Profile = () => {
                 className="text-4xl font-bold bg-gradient-to-r from-[#8B5CF6] via-[#D946EF] to-[#0EA5E9] text-transparent bg-clip-text cursor-pointer relative"
               >
                 <span className="absolute -inset-1 bg-gradient-to-r from-[#8B5CF6]/20 to-[#0EA5E9]/20 rounded-lg blur opacity-30 animate-pulse" />
-                CodeSpace
+                CodeHubX
               </motion.h1>
             </Link>
             <div className="flex items-center gap-4">
