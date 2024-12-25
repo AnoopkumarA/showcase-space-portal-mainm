@@ -8,20 +8,25 @@ import { ContributionGraph } from '@/components/ContributionGraph';
 import { UserCount } from '@/components/UserCount';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Sparkles, Code2, Palette, Rocket, Globe, Figma, Box, Search, Link2, CheckCircle2, Github, Twitter, Linkedin } from "lucide-react";
+import { Sparkles, Code2, Palette, Rocket, Globe, Figma, Box, Search, Link2, CheckCircle2, Github, Twitter, Linkedin, Menu, X, LogOut } from "lucide-react";
 import { useSupabase } from '@/contexts/SupabaseContext';
-import { AuthButton } from '@/components/AuthButton';
 import { Button } from '@/components/ui/button';
+import { AddProjectDialog } from '@/components/AddProjectDialog';
 
 const Profile = () => {
   const { userId } = useParams();
-  const { user } = useSupabase();
+  const { user, signOut, handleSignIn } = useSupabase();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("all");
   const [isCopied, setIsCopied] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
 
   const copyProfileUrl = () => {
     if (userId) {
@@ -50,30 +55,11 @@ const Profile = () => {
           setError('No projects found for this user.');
           return;
         }
-
-        // Group projects by date and count them
-        const projectsWithCount = data.map(project => {
-          const date = new Date(project.created_at).toISOString().split('T')[0];
-          const projectsOnSameDay = data.filter(p => 
-            new Date(p.created_at).toISOString().split('T')[0] === date
-          ).length;
-          
-          return {
-            ...project,
-            id: project.id.toString(),
-            userId: project.user_id,
-            createdAt: project.created_at,
-            type: project.type,
-            url: project.url,
-            tags: project.tags,
-            projectsInDay: projectsOnSameDay // Add count of projects on same day
-          };
-        });
         
-        setProjects(projectsWithCount);
-      } catch (error) {
-        console.error('Error loading projects:', error);
-        setError('Failed to load projects. Please try again later.');
+        setProjects(data);
+      } catch (err) {
+        console.error('Error loading projects:', err);
+        setError('Failed to load projects.');
       } finally {
         setLoading(false);
       }
@@ -82,24 +68,12 @@ const Profile = () => {
     loadProjects();
   }, [userId]);
 
-  // Add search filter function
-  function filterProjects(projectsToFilter: Project[]) {
-    if (!searchQuery) return projectsToFilter;
-    
-    const query = searchQuery.toLowerCase();
-    return projectsToFilter.filter(project => 
-      project.title.toLowerCase().includes(query) ||
-      project.description.toLowerCase().includes(query) ||
-      project.tags.some(tag => tag.toLowerCase().includes(query))
-    );
-  }
-
-  const filteredProjects = {
-    all: filterProjects(projects),
-    website: filterProjects(projects.filter(project => project.type === 'website')),
-    figma: filterProjects(projects.filter(project => project.type === 'figma')),
-    other: filterProjects(projects.filter(project => project.type === 'other'))
-  };
+  const filteredProjects = projects.filter(project => 
+    !searchQuery || 
+    project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    project.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -113,48 +87,99 @@ const Profile = () => {
               <motion.h1 
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-4xl font-bold bg-gradient-to-r from-[#8B5CF6] via-[#D946EF] to-[#0EA5E9] text-transparent bg-clip-text cursor-pointer relative"
+                className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-[#8B5CF6] via-[#D946EF] to-[#0EA5E9] text-transparent bg-clip-text cursor-pointer relative"
               >
                 <span className="absolute -inset-1 bg-gradient-to-r from-[#8B5CF6]/20 to-[#0EA5E9]/20 rounded-lg blur opacity-30 animate-pulse" />
                 CodeHubX
               </motion.h1>
             </Link>
-            <div className="flex items-center gap-4">
-              <AuthButton />
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center gap-4">
+              {user ? (
+                <>
+                  <Button 
+                    onClick={signOut}
+                    className="bg-[#403E43]/30 hover:bg-[#8B5CF6]/20 text-white"
+                  >
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Sign Out
+                  </Button>
+                  <AddProjectDialog onProjectAdd={(project) => setProjects([project, ...projects])} />
+                </>
+              ) : (
+                <Button
+                  onClick={handleSignIn}
+                  className="bg-gradient-to-r from-[#8B5CF6] to-[#D946EF] hover:from-[#7C3AED] hover:to-[#C026D3] text-white"
+                >
+                  <Github className="w-5 h-5 mr-2" />
+                  Sign in with GitHub
+                </Button>
+              )}
             </div>
+            {/* Mobile Menu Button */}
+            <button
+              className="md:hidden text-white p-2"
+              onClick={toggleMobileMenu}
+              aria-label="Toggle mobile menu"
+            >
+              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
           </div>
         </div>
       </header>
 
-      {user && (
-        <motion.div 
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="fixed top-24 right-8 z-40"
-        >
-          <Button
-            variant="outline"
-            size="sm"
-            className="group relative overflow-hidden rounded-md bg-transparent px-3 py-1 transition-all duration-300 ease-out hover:scale-105 border border-[#8B5CF6] text-[#8B5CF6] hover:bg-[#8B5CF6] hover:text-white"
-            onClick={copyProfileUrl}
+      {/* Mobile Menu */}
+      <div
+        className={`fixed inset-0 bg-black/95 z-50 md:hidden transition-transform duration-300 ease-in-out ${
+          isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+      >
+        <div className="relative w-full h-full">
+          {/* Close Button */}
+          <button
+            className="absolute top-6 right-6 text-white p-2 hover:bg-white/10 rounded-full transition-colors"
+            onClick={toggleMobileMenu}
+            aria-label="Close menu"
           >
-            <span className="relative z-10 flex items-center gap-1 transition-colors duration-300 group-hover:text-white">
-              {isCopied ? (
-                <>
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span className="whitespace-nowrap">Copied!</span>
-                </>
-              ) : (
-                <>
-                  <Link2 className="w-4 h-4" />
-                  <span className="whitespace-nowrap">Share Profile</span>
-                </>
-              )}
-            </span>
-            <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#8B5CF6] to-[#D946EF] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-          </Button>
-        </motion.div>
-      )}
+            <X className="w-6 h-6" />
+          </button>
+          
+          <div className="flex flex-col items-center justify-center h-full gap-6">
+            {user ? (
+              <>
+                <span className="text-base font-bold bg-gradient-to-r from-[#8B5CF6] via-[#D946EF] to-[#0EA5E9] text-transparent bg-clip-text">
+                  {user.email}
+                </span>
+                <Button
+                  onClick={() => {
+                    signOut();
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="bg-gradient-to-r from-[#8B5CF6] to-[#D946EF] hover:from-[#7C3AED] hover:to-[#C026D3] text-white"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Sign Out
+                </Button>
+                <AddProjectDialog onProjectAdd={(project) => {
+                  setProjects([project, ...projects]);
+                  setIsMobileMenuOpen(false);
+                }} />
+              </>
+            ) : (
+              <Button
+                onClick={() => {
+                  handleSignIn();
+                  setIsMobileMenuOpen(false);
+                }}
+                className="bg-gradient-to-r from-[#8B5CF6] to-[#D946EF] hover:from-[#7C3AED] hover:to-[#C026D3] text-white"
+              >
+                <Github className="w-5 h-5 mr-2" />
+                Sign in with GitHub
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
 
       <div className="container mx-auto py-28">
         <motion.div
@@ -165,7 +190,7 @@ const Profile = () => {
           <div className="relative inline-block mb-6">
             <div className="absolute -inset-1 bg-gradient-to-r from-[#8B5CF6] to-[#0EA5E9] rounded-lg blur opacity-30 animate-pulse" />
             <h2 className="relative bg-black px-4 py-2 rounded-lg">
-              <span className="text-4xl font-bold bg-gradient-to-r from-[#8B5CF6] via-[#D946EF] to-[#0EA5E9] text-transparent bg-clip-text">
+              <span className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-[#8B5CF6] via-[#D946EF] to-[#0EA5E9] text-transparent bg-clip-text">
                 Project Portfolio
               </span>
               <div className="absolute top-0 right-0 mt-1 mr-1">
@@ -191,7 +216,7 @@ const Profile = () => {
                   <span className="text-gray-300"> [</span>
                   <span className="text-[#0EA5E9]">'innovation'</span>
                   <span className="text-gray-300">,</span>
-                  <span className="text-[#0EA5E9]">'creativity'</span>
+                  <span className="text-[#0EA5E9]">'creativity'</span><br></br>
                   <span className="text-gray-300">,</span>
                   <span className="text-[#0EA5E9]">'excellence'</span>
                   <span className="text-gray-300">],</span>
@@ -209,40 +234,40 @@ const Profile = () => {
           </h1>
 
           <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="mb-8 relative max-w-2xl mx-auto"
-          >
-            <div className="relative group">
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-[#8B5CF6] via-[#D946EF] to-[#0EA5E9] rounded-lg blur opacity-50 group-hover:opacity-75 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
-              <div className="relative">
-                <div className="relative bg-[#1A1F2C] rounded-lg p-2 ring-1 ring-[#8B5CF6]/20">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#8B5CF6] w-5 h-5 transition-colors group-hover:text-[#D946EF]" />
-                  <Input
-                    type="text"
-                    placeholder="Search projects by title, description, or tags..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-12 pr-4 py-3 w-full bg-transparent border-none text-white placeholder:text-gray-400 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                  />
-                  {searchQuery && (
-                    <button
-                      onClick={() => setSearchQuery("")}
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
-                    >
-                      ×
-                    </button>
-                  )}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="mb-8 relative max-w-2xl mx-auto"
+            >
+              <div className="relative group">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-[#8B5CF6] via-[#D946EF] to-[#0EA5E9] rounded-lg blur opacity-50 group-hover:opacity-75 transition duration-1000 group-hover:duration-200 animate-tilt" />
+                <div className="relative">
+                  <div className="relative bg-[#1A1F2C] rounded-lg p-1 md:p-2 ring-1 ring-[#8B5CF6]/20">
+                    <Search className="absolute left-2 md:left-4 top-1/2 transform -translate-y-1/2 text-[#8B5CF6] w-4 md:w-5 h-4 md:h-5 transition-colors group-hover:text-[#D946EF]" />
+                    <Input
+                      type="text"
+                      placeholder="Search projects..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-8 md:pl-12 pr-4 py-2 md:py-3 w-full bg-transparent border-none text-white text-sm md:text-base placeholder:text-gray-400 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    />
+                    {searchQuery && (
+                      <button
+                        onClick={() => setSearchQuery("")}
+                        className="absolute right-2 md:right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                      >
+                        ×
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-            {searchQuery && (
-              <div className="absolute right-3 -bottom-6 text-sm text-gray-400">
-                {filteredProjects.all.length} results found
-              </div>
-            )}
-          </motion.div>
+              {searchQuery && (
+                <div className="absolute right-3 -bottom-6 text-xs md:text-sm text-gray-400">
+                  {filteredProjects.length} results found
+                </div>
+              )}
+            </motion.div>
 
           {error ? (
             <div className="text-red-500 mt-4">{error}</div>
@@ -254,35 +279,35 @@ const Profile = () => {
             <>
               <Tabs defaultValue="all" className="w-full" onValueChange={setActiveTab}>
                 <TabsList className="grid w-full grid-cols-4 mb-8">
-                  <TabsTrigger value="all" className="flex items-center gap-2">
-                    <Box className="w-4 h-4" />
-                    All Projects ({filteredProjects.all.length})
+                  <TabsTrigger value="all" className="flex items-center gap-2 text-sm md:text-base">
+                    <Box className="hidden md:block w-4 h-4" />
+                    All ({filteredProjects.length})
                   </TabsTrigger>
-                  <TabsTrigger value="website" className="flex items-center gap-2">
-                    <Globe className="w-4 h-4" />
-                    Websites ({filteredProjects.website.length})
+                  <TabsTrigger value="website" className="flex items-center gap-2 text-sm md:text-base">
+                    <Globe className="hidden md:block w-4 h-4" />
+                    Web ({filteredProjects.filter(project => project.type === 'website').length})
                   </TabsTrigger>
-                  <TabsTrigger value="figma" className="flex items-center gap-2">
-                    <Figma className="w-4 h-4" />
-                    Figma Designs ({filteredProjects.figma.length})
+                  <TabsTrigger value="figma" className="flex items-center gap-2 text-sm md:text-base">
+                    <Figma className="hidden md:block w-4 h-4" />
+                    Figma ({filteredProjects.filter(project => project.type === 'figma').length})
                   </TabsTrigger>
-                  <TabsTrigger value="other" className="flex items-center gap-2">
-                    <Box className="w-4 h-4" />
-                    Other ({filteredProjects.other.length})
+                  <TabsTrigger value="other" className="flex items-center gap-2 text-sm md:text-base">
+                    <Box className="hidden md:block w-4 h-4" />
+                    Other ({filteredProjects.filter(project => project.type === 'other').length})
                   </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="all">
-                  <ProjectGrid projects={filteredProjects.all} />
+                  <ProjectGrid projects={filteredProjects} />
                 </TabsContent>
                 <TabsContent value="website">
-                  <ProjectGrid projects={filteredProjects.website} />
+                  <ProjectGrid projects={filteredProjects.filter(project => project.type === 'website')} />
                 </TabsContent>
                 <TabsContent value="figma">
-                  <ProjectGrid projects={filteredProjects.figma} />
+                  <ProjectGrid projects={filteredProjects.filter(project => project.type === 'figma')} />
                 </TabsContent>
                 <TabsContent value="other">
-                  <ProjectGrid projects={filteredProjects.other} />
+                  <ProjectGrid projects={filteredProjects.filter(project => project.type === 'other')} />
                 </TabsContent>
               </Tabs>
               
