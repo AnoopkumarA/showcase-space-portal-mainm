@@ -6,6 +6,7 @@ type SupabaseContextType = {
 	user: User | null
 	loading: boolean
 	signOut: () => Promise<void>
+	handleSignIn: () => Promise<void>
 }
 
 const SupabaseContext = createContext<SupabaseContextType | undefined>(undefined)
@@ -42,8 +43,22 @@ function SupabaseProvider({ children }: { children: React.ReactNode }) {
 		await supabase.auth.signOut()
 	}
 
+	const handleSignIn = async () => {
+		try {
+			const { error } = await supabase.auth.signInWithOAuth({
+				provider: 'github',
+				options: {
+					redirectTo: window.location.origin
+				}
+			})
+			if (error) throw error
+		} catch (error) {
+			console.error('Error signing in:', error)
+		}
+	}
+
 	return (
-		<SupabaseContext.Provider value={{ user, loading, signOut }}>
+		<SupabaseContext.Provider value={{ user, loading, signOut, handleSignIn }}>
 			{children}
 		</SupabaseContext.Provider>
 	)
