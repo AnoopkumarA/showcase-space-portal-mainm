@@ -124,7 +124,7 @@ export const PreviewDialog = ({ project, open, onOpenChange }: PreviewDialogProp
 					</div>
 
 					{/* Action Buttons */}
-					<div className="flex flex-col md:flex-row md:justify-end gap-2 mt-4 md:mt-6">
+					<div className="flex flex-col md:flex-row md:justify-end gap-0 mt-4 md:mt-6">
 						<div className="flex flex-wrap justify-center md:flex-nowrap md:justify-end gap-2 w-full">
 							{/* Visit Website Button */}
 							<Button
