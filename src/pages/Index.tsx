@@ -383,7 +383,7 @@ const Index = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="mt-16 -mb-16 md:mb-1 max-w-5xl mx-auto"
+            className="mt-16 md:mt-[6rem] -mb-16 md:-mb-14 max-w-5xl mx-auto"
           >
             <ContributionGraph projects={projects} />
             <UserCount />

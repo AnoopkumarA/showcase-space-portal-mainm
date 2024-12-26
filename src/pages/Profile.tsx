@@ -50,16 +50,33 @@ const Profile = () => {
           .order('created_at', { ascending: false });
 
         if (error) throw error;
-        
-        if (!data || data.length === 0) {
-          setError('No projects found for this user.');
+        if (!data) {
+          setProjects([]);
           return;
         }
-        
-        setProjects(data);
-      } catch (err) {
-        console.error('Error loading projects:', err);
-        setError('Failed to load projects.');
+
+        // Group projects by date and count them
+        const projectsWithCount = data.map(project => {
+          const date = new Date(project.created_at).toISOString().split('T')[0];
+          const projectsOnSameDay = data.filter(p => 
+            new Date(p.created_at).toISOString().split('T')[0] === date
+          ).length;
+          
+          return {
+            ...project,
+            id: project.id.toString(),
+            userId: project.user_id,
+            createdAt: project.created_at,
+            type: project.type,
+            url: project.url,
+            tags: project.tags,
+            projectsInDay: projectsOnSameDay // Add count of projects on same day
+          };
+        });
+
+        setProjects(projectsWithCount);
+      } catch (error: any) {
+        setError(error.message);
       } finally {
         setLoading(false);
       }
@@ -314,13 +331,13 @@ const Profile = () => {
             </>
           )}
         </motion.div>
-        <main className="container mx-auto py-2">
+        <main className="">
               {!loading && (
                 <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="mt-10 mb-1 max-w-5xl mx-auto"
+                className="mt-10 -mb-6 max-w-5xl mx-auto"
                 >
                 <ContributionGraph projects={projects} />
                 <UserCount />

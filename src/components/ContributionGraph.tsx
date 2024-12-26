@@ -14,12 +14,12 @@ export const ContributionGraph: React.FC<ContributionGraphProps> = ({ projects }
 			'bg-green-800 dark:from-emerald-700 dark:to-emerald-600',
             'bg-green-700 dark:from-emerald-700 dark:to-emerald-600',
             'bg-green-600 dark:from-emerald-700 dark:to-emerald-600',
-			'bg-green-400 dark:from-emerald-600 dark:to-emerald-500',
-            'bg-[#90EE90] dark:from-emerald-600 dark:to-emerald-500',
             'bg-green-500 dark:from-emerald-600 dark:to-emerald-500',
-			' bg-[#FFD700] dark:from-emerald-500 dark:to-emerald-400'
-		];
-		return colors[Math.min(count - 1, colors.length - 1)] || colors[0];
+            'bg-green-400 dark:from-emerald-600 dark:to-emerald-500'
+        ];
+
+		const colorIndex = Math.min(Math.floor(count / 2), colors.length - 1);
+		return colors[colorIndex];
 	};
 
 	// Group projects by date and count
