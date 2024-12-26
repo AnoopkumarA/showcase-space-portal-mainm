@@ -46,6 +46,41 @@ export const ProjectCard = ({ project, onView, isNewProject = false }: ProjectCa
   }, [project.url, project.imageUrl]);
 
   const getPreviewContent = () => {
+    if (project.type === ProjectType.WEBSITE && !iframeError) {
+      return (
+        <div className="relative w-full h-full bg-[#2A2D3E]">
+          {!iframeLoaded && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-8 h-8 border-t-2 border-b-2 border-purple-500 rounded-full animate-spin"></div>
+            </div>
+          )}
+          <iframe
+            src={project.url}
+            className={`w-full h-full border-0 transition-opacity duration-300 ${iframeLoaded ? 'opacity-100' : 'opacity-0'}`}
+            style={{
+              transform: 'scale(0.75)',
+              transformOrigin: '0 0',
+              width: '133.33%',
+              height: '133.33%',
+              pointerEvents: 'none'
+            }}
+            title={project.title}
+            onError={() => {
+              setIframeError(true);
+              setIframeLoaded(false);
+            }}
+            onLoad={() => {
+              setIframeLoaded(true);
+              setIframeError(false);
+            }}
+            sandbox="allow-same-origin allow-scripts"
+            loading="lazy"
+            scrolling="no"
+          />
+        </div>
+      );
+    }
+
     const { type, id } = getVideoPreview(project.url);
 
     if (type === 'instagram') {
