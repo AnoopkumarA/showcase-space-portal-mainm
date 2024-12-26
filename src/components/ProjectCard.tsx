@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import { PreviewDialog } from "./PreviewDialog";
 import { isYouTubeUrl, getYouTubeVideoId, getYouTubeThumbnailUrl } from "@/utils/youtube";
 import { isFigmaUrl, getFigmaFileKey, getFigmaThumbnailUrl } from "@/utils/figma";
+import { getVideoPreview } from "@/utils/getVideoPreview";
 
 interface ProjectCardProps {
   project: Project;
@@ -33,132 +34,47 @@ export const ProjectCard = ({ project, onView, isNewProject = false }: ProjectCa
         } else if (isFigmaUrl(project.url)) {
           const fileKey = getFigmaFileKey(project.url);
           if (fileKey) {
-            // For Figma files, prioritize uploaded image, then fall back to thumbnail
             const figmaThumbnail = getFigmaThumbnailUrl(fileKey);
             setThumbnailUrl(project.imageUrl || figmaThumbnail);
           }
         }
       }
+      setIsLoading(false);
     };
 
     loadPreview();
-
-    if (isNewProject) {
-      const timer = setTimeout(() => {
-        setIsLoading(false);
-      }, 8000);
-      return () => clearTimeout(timer);
-    }
-  }, [project.url, project.imageUrl, isNewProject]);
-
+  }, [project.url, project.imageUrl]);
 
   const getPreviewContent = () => {
-    if (isLoading) {
-      return (
-        <div className="w-full h-full bg-[#2A2D3E] flex items-center justify-center relative">
-          <div className="flex flex-col items-center justify-center min-h-full w-full bg-gray-900 text-green-500 font-mono relative">
-            {/* Hexagon Container */}
-            <div className="relative w-20 h-20">
-              {[0, 1, 2].map((i) => (
-                <div
-                  key={i}
-                  className="absolute inset-0 border-2 border-green-500 opacity-30 animate-spin"
-                  style={{
-                    clipPath: 'polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%)',
-                    transform: `rotate(${i * 30}deg)`,
-                    animationDuration: `${3 + i}s`
-                  }}
-                />
-              ))}
-              
-              <div className="absolute inset-2 rounded-full bg-gray-800 flex items-center justify-center">
-                <div className="text-lg font-bold animate-pulse">
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-blue-500">
-                    &lt;/&gt;
-                  </span>
-                </div>
-              </div>
-            </div>
+    const { type, id } = getVideoPreview(project.url);
 
-            {/* Loading Status */}
-            <div className="mt-4 text-sm w-full text-center px-4"></div>
-              <div className="h-6 overflow-hidden">
-                <div className="animate-pulse">
-                  Initializing Preview...
-                </div>
-              </div>
-              <div className="mt-2 h-1 bg-gray-800 rounded-full overflow-hidden mx-auto w-32">
-                <div
-                  className="h-full bg-gradient-to-r from-green-500 to-blue-500 animate-progress"
-                />
-              </div>
-            </div>
-          </div>
+    if (type === 'instagram') {
+      return (
+        <div className="w-full h-full bg-gradient-to-br from-[#833AB4] via-[#FD1D1D] to-[#FCAF45] flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" className="w-16 h-16" fill="white">
+            <path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/>
+          </svg>
+        </div>
       );
     }
-    if (project.type === ProjectType.FIGMA) {
+
+    if (type === 'youtube' || thumbnailUrl) {
       return (
-      <div className="w-full h-full bg-[#2A2D3E] flex items-center justify-center">
         <img
-        src={project.imageUrl || thumbnailUrl || "/placeholder.svg"}
-        alt={project.title}
-        className="w-full h-full object-cover"
-        className="w-full h-full object-cover"
-        onError={(e) => {
-          setIframeError(true);
-          e.currentTarget.src = "/placeholder.svg";
-        }}
+          src={type === 'youtube' ? `https://img.youtube.com/vi/${id}/maxresdefault.jpg` : thumbnailUrl || ''}
+          alt={project.title}
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            setIframeError(true);
+            e.currentTarget.src = "/placeholder.svg";
+          }}
         />
-      </div>
-      );
-    }
-
-    if (project.type === ProjectType.WEBSITE && !iframeError) {
-      return (
-      <div className="relative w-full h-full bg-[#2A2D3E]">
-      {!iframeLoaded && (
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-8 h-8 border-t-2 border-b-2 border-purple-500 rounded-full animate-spin"></div>
-      </div>
-      )}
-        <iframe
-        src={project.url}
-        className={`w-full h-full border-0 transition-opacity duration-300 ${iframeLoaded ? 'opacity-100' : 'opacity-0'}`}
-        style={{
-          transform: 'scale(0.75)',
-          transformOrigin: '0 0',
-          width: '133.33%',
-          height: '133.33%',
-          pointerEvents: 'none'
-        }}
-        title={project.title}
-        onError={() => {
-          setIframeError(true);
-          setIframeLoaded(false);
-        }}
-        onLoad={() => {
-          setIframeLoaded(true);
-          setIframeError(false);
-        }}
-        sandbox="allow-same-origin allow-scripts"
-        loading="lazy"
-        scrolling="no"
-        />
-      </div>
       );
     }
 
     return (
-      <div className="w-full h-full bg-[#2A2D3E] flex items-center justify-center">
-      <img
-        src={project.imageUrl || thumbnailUrl || "/placeholder.svg"}
-        alt={project.title}
-        className="w-full h-full object-cover"
-        onError={(e) => {
-        setIframeError(true);
-        e.currentTarget.src = "/placeholder.svg";
-        }}
-      />
+      <div className="w-full h-full bg-gradient-to-br from-[#8B5CF6]/20 to-[#D946EF]/20 flex items-center justify-center">
+        <span className="text-white/50">No preview available</span>
       </div>
     );
   };
