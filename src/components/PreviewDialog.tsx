@@ -99,6 +99,13 @@ export const PreviewDialog = ({ project, open, onOpenChange }: PreviewDialogProp
             className="w-full h-full border-0"
             title={project.title}
             allowFullScreen
+            style={{
+              transform: 'scale(0.75)',
+              transformOrigin: '0 0',
+              width: '133.33%',
+              height: '133.33%',
+              pointerEvents: 'none'
+            }}
           />
         </div>
       );
@@ -106,7 +113,7 @@ export const PreviewDialog = ({ project, open, onOpenChange }: PreviewDialogProp
 
     if (project.type === "figma") {
       return (
-        <div className="w-full h-full bg-[#2A2D3E] flex items-center justify-center">
+        <div className="relative aspect-video rounded-md overflow-hidden">
           <img
             src={project.imageUrl || thumbnailUrl || "/placeholder.svg"}
             alt={project.title}
