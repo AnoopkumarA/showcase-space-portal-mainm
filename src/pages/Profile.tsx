@@ -332,9 +332,9 @@ const Profile = () => {
         <div className="container mx-auto text-center">
           <div className="text-[#8B5CF6] opacity-60">// Connect with us</div>
           <div className="flex justify-center space-x-4 mt-2">
-            <a href="#" className="text-[#D946EF] hover:underline">About</a>
+            <a href="https://github.com/AnoopkumarA" className="text-[#D946EF] hover:underline">About</a>
             <a href="#" className="text-[#D946EF] hover:underline">Contact</a>
-            <a href="#" className="text-[#D946EF] hover:underline">Privacy Policy</a>
+            <a href="https://www.linkedin.com/in/anoop-kumar-a-26a6941b9/" className="text-[#D946EF] hover:underline">Privacy Policy</a>
           </div>
           <div className="flex justify-center space-x-4 mt-4">
             <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-[#D946EF] hover:scale-110 transition-transform duration-300"><Github className="w-6 h-6" /></a>

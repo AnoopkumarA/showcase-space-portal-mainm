@@ -9,7 +9,8 @@ interface ContributionGraphProps {
 export const ContributionGraph: React.FC<ContributionGraphProps> = ({ projects }) => {
 	const getContributionColor = (count: number): string => {
 		const colors = [
-            'bg-green-300 dark:from-emerald-500 dark:to-emerald-400',
+            'bg-green-200 dark:from-emerald-500 dark:to-emerald-400',
+			'bg-green-300 dark:from-emerald-500 dark:to-emerald-400',
 			'bg-green-800 dark:from-emerald-700 dark:to-emerald-600',
             'bg-green-700 dark:from-emerald-700 dark:to-emerald-600',
             'bg-green-600 dark:from-emerald-700 dark:to-emerald-600',

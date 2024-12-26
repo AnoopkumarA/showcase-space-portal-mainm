@@ -401,9 +401,9 @@ const Index = () => {
             <a href="#" className="text-[#D946EF] hover:underline">Privacy Policy</a>
           </div>
           <div className="flex justify-center space-x-4 mt-4">
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-[#D946EF] hover:scale-110 transition-transform duration-300"><Github className="w-6 h-6" /></a>
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-[#D946EF] hover:scale-110 transition-transform duration-300"><Twitter className="w-6 h-6" /></a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-[#D946EF] hover:scale-110 transition-transform duration-300"><Linkedin className="w-6 h-6" /></a>
+            <a href="https://github.com/AnoopkumarA" target="_blank" rel="noopener noreferrer" className="text-[#D946EF] hover:scale-110 transition-transform duration-300"><Github className="w-6 h-6" /></a>
+            <a href="" target="_blank" rel="noopener noreferrer" className="text-[#D946EF] hover:scale-110 transition-transform duration-300"><Twitter className="w-6 h-6" /></a>
+            <a href="https://www.linkedin.com/in/anoop-kumar-a-26a6941b9/" target="_blank" rel="noopener noreferrer" className="text-[#D946EF] hover:scale-110 transition-transform duration-300"><Linkedin className="w-6 h-6" /></a>
           </div>
           <div className="mt-4 text-gray-300 text-sm">
             <span className="text-[#8B5CF6]"> 2024 Project Showcase. </span> 

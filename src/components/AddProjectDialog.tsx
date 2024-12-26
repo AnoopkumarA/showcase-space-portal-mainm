@@ -232,13 +232,13 @@ export const AddProjectDialog = ({ onProjectAdd }: AddProjectDialogProps) => {
           <div className="space-y-1.5 md:space-y-2">
             <Label htmlFor="url" className="text-sm md:text-base text-gray-300 flex items-center gap-1.5 md:gap-2">
               <Link className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#8B5CF6]" />
-              Primary URL
+              Project URL
             </Label>
             <Input
               id="url"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              placeholder="Primary project URL"
+              placeholder="Hosted URL"
               required
               className="text-sm md:text-base h-9 md:h-10 bg-[#403E43]/30 border-[#8B5CF6]/20 text-white placeholder:text-gray-500"
             />
@@ -246,13 +246,13 @@ export const AddProjectDialog = ({ onProjectAdd }: AddProjectDialogProps) => {
           <div className="space-y-1.5 md:space-y-2">
             <Label htmlFor="url2" className="text-sm md:text-base text-gray-300 flex items-center gap-1.5 md:gap-2">
               <Link className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#8B5CF6]" />
-              Secondary URL
+              Code/File URL
             </Label>
             <Input
               id="url2"
               value={url2}
               onChange={(e) => setUrl2(e.target.value)}
-              placeholder="Secondary project URL (optional)"
+              placeholder="Github or File UR"
               className="text-sm md:text-base h-9 md:h-10 bg-[#403E43]/30 border-[#8B5CF6]/20 text-white placeholder:text-gray-500"
             />
           </div>
