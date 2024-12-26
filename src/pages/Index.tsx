@@ -7,7 +7,7 @@ import { AddProjectDialog } from "@/components/AddProjectDialog";
 import { motion } from "framer-motion";
 import { supabase } from "@/lib/supabase";
 import { useSupabase } from "@/contexts/SupabaseContext";
-import { Sparkles, Code2, Palette, Rocket, Globe, Figma, Box, Search, Link2, CheckCircle2, Github, Twitter, Linkedin, Menu, X, LogOut } from "lucide-react";
+import { Sparkles, Code2, Palette, Rocket, Globe, Figma, Box, Search, Link2, CheckCircle2, Github, Twitter, Instagram, Linkedin, Menu, X, LogOut } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { AuthButton } from "@/components/AuthButton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -402,7 +402,7 @@ const Index = () => {
           </div>
           <div className="flex justify-center space-x-4 mt-4">
             <a href="https://github.com/AnoopkumarA" target="_blank" rel="noopener noreferrer" className="text-[#D946EF] hover:scale-110 transition-transform duration-300"><Github className="w-6 h-6" /></a>
-            <a href="" target="_blank" rel="noopener noreferrer" className="text-[#D946EF] hover:scale-110 transition-transform duration-300"><Twitter className="w-6 h-6" /></a>
+            <a href="https://www.instagram.com/a_n_o_o_pz/profilecard/?igsh=OHY2NjU0aWl4NG12" target="_blank" rel="noopener noreferrer" className="text-[#D946EF] hover:scale-110 transition-transform duration-300"><Instagram className="w-6 h-6" /></a>
             <a href="https://www.linkedin.com/in/anoop-kumar-a-26a6941b9/" target="_blank" rel="noopener noreferrer" className="text-[#D946EF] hover:scale-110 transition-transform duration-300"><Linkedin className="w-6 h-6" /></a>
           </div>
           <div className="mt-4 text-gray-300 text-sm">

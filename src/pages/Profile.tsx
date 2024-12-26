@@ -8,7 +8,7 @@ import { ContributionGraph } from '@/components/ContributionGraph';
 import { UserCount } from '@/components/UserCount';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Sparkles, Code2, Palette, Rocket, Globe, Figma, Box, Search, Link2, CheckCircle2, Github, Twitter, Linkedin, Menu, X, LogOut } from "lucide-react";
+import { Sparkles, Code2, Palette, Rocket, Globe, Figma, Box, Search, Link2, CheckCircle2, Github, Twitter, Instagram, Linkedin, Menu, X, LogOut } from "lucide-react";
 import { useSupabase } from '@/contexts/SupabaseContext';
 import { Button } from '@/components/ui/button';
 import { AddProjectDialog } from '@/components/AddProjectDialog';
@@ -333,12 +333,12 @@ const Profile = () => {
           <div className="text-[#8B5CF6] opacity-60">// Connect with us</div>
           <div className="flex justify-center space-x-4 mt-2">
             <a href="https://github.com/AnoopkumarA" className="text-[#D946EF] hover:underline">About</a>
-            <a href="#" className="text-[#D946EF] hover:underline">Contact</a>
+            <a href="https://www.instagram.com/a_n_o_o_pz/profilecard/?igsh=OHY2NjU0aWl4NG12" className="text-[#D946EF] hover:underline">Contact</a>
             <a href="https://www.linkedin.com/in/anoop-kumar-a-26a6941b9/" className="text-[#D946EF] hover:underline">Privacy Policy</a>
           </div>
           <div className="flex justify-center space-x-4 mt-4">
             <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-[#D946EF] hover:scale-110 transition-transform duration-300"><Github className="w-6 h-6" /></a>
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-[#D946EF] hover:scale-110 transition-transform duration-300"><Twitter className="w-6 h-6" /></a>
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-[#D946EF] hover:scale-110 transition-transform duration-300"><Instagram  className="w-6 h-6" /></a>
             <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-[#D946EF] hover:scale-110 transition-transform duration-300"><Linkedin className="w-6 h-6" /></a>
           </div>
           <div className="mt-4 text-gray-300 text-sm">
